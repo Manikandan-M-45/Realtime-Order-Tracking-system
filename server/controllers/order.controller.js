@@ -15,6 +15,7 @@ exports.createOrder = (io) => async (req, res) => {
     });
 
     io.emit("newOrderPlaced", order);
+    console.log("backen order")
     res.status(201).json(order);
   } catch (error) {
     console.error(error.message);

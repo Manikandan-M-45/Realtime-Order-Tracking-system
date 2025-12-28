@@ -27,7 +27,10 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "url(https://images.unsplash.com/photo-1674027392887-751d6396b710?q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) no-repeat", objectFit: "cover", overflow: "hidden" }}>
+      <div>
+
+      </div>
       <div className="bg-white p-6 rounded-lg shadow-md w-80">
         <h2 className="text-xl font-semibold mb-4 text-center">Admin Login</h2>
 

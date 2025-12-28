@@ -4,8 +4,6 @@ const connectDb = require("./config/connectDb");
 const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
-
-// Routes
 const productRoutes = require("./routes/product.route");
 const orderRoutes = require("./routes/order.route");
 

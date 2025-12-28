@@ -155,26 +155,29 @@ export default function ManageProduct() {
           products.map(p => (
             <div
               key={p._id}
-              className="flex justify-between items-center border-b p-4 last:border-none"
+              className="flex justify-between gap-10 border-b p-4 last:border-none"
             >
+              <div className="w-150 h-50">
+                <img src={p.imageUrl} alt="" className="w-full h-full object-contain" />
+              </div>
               <div>
                 <h4 className="font-semibold">{p.name}</h4>
                 <p className="text-sm text-gray-600">{p.description}</p>
-                <p className="text-sm mt-1">
+                <p className="text-xl font-bold mt-1">
                   ₹{p.price} · Stock: {p.stock}
                 </p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => editProduct(p)}
-                  className="text-blue-600 hover:underline"
+                  className="text-white bg-blue-700 px-5 py-2 inline-block hover:cursor-pointer hover:rounded-2xl hover:transition-all"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => deleteProduct(p._id)}
-                  className="text-red-600 hover:underline"
+                  className="text-white bg-red-600 px-5 py-2 hover:bg-red-800 hover:cursor-pointer hover:rounded-2xl hover:transition-all"
                 >
                   Delete
                 </button>

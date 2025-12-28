@@ -39,6 +39,11 @@ export default function Checkout() {
     try {
       const res = await api.post("/orders", order);
       clearCart();
+      setCustomer({
+        name: "",
+        phone: "",
+        address: ""
+      })
       setPlaced(true);
       toast.success("Order placed successfully!");
       navigate(`/order/${res.data._id}`);
@@ -68,7 +73,7 @@ export default function Checkout() {
                 onClick={() => removeFromCart(item._id)}
                 className="text-red-500 hover:text-red-700 text-sm font-semibold"
               >
-                -
+                Remove
               </button>
             </div>
           ))}

@@ -5,6 +5,7 @@ import { AdminContext } from "../context/AdminContext";
 import { Menu, SidebarClose, ShoppingBag, LogOut, LogIn } from "lucide-react";
 import Checkout from "../pages/Checkout";
 import { toast } from "react-toastify";
+import { ProductContext } from "../context/ProductContext";
 
 export default function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -12,6 +13,7 @@ export default function Navbar() {
 
   const { cart } = useContext(CartContext);
   const { admin, logout } = useContext(AdminContext);
+  const { setSearch, search } = useContext(ProductContext);
 
   const navigate = useNavigate();
 
@@ -45,7 +47,17 @@ export default function Navbar() {
             Ohoo
           </Link>
 
-          {/* Desktop Links */}
+          {/* Search Bar */}
+          <div className="w-1/2">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+
           <div className="hidden md:flex items-center space-x-6">
             {filteredLinks.map(link => (
               <NavLink
@@ -61,7 +73,6 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            {/* Logout button */}
             {admin && (
               <button
                 onClick={handleLogout}
@@ -73,16 +84,16 @@ export default function Navbar() {
 
             {!admin && <button
               onClick={handleLogin}
-              className="flex items-center text-gray-700 hover:text-red-500"
+              className="flex items-center text-gray-700 hover:text-red-500 hover:cursor-pointer"
             >
               <LogIn className="w-5 h-5 mr-1" /> Login
             </button>}
-            {/* Cart */}
+
             <button
               className="relative"
               onClick={() => setIsCartOpen(true)}
             >
-              <ShoppingBag className="w-6 h-6 text-gray-700 hover:text-indigo-500" />
+              <ShoppingBag className="w-6 h-6 text-gray-700 hover:text-indigo-500 hover:cursor-pointer" />
               {cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5">
                   {cart.length}
@@ -109,7 +120,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button onClick={() => setIsMobileOpen(!isMobileOpen)}>
               {isMobileOpen ? <SidebarClose /> : <Menu />}
@@ -137,7 +147,6 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            {/* Logout for mobile */}
             {admin && (
               <button
                 onClick={() => { handleLogout(); setIsMobileOpen(false); }}

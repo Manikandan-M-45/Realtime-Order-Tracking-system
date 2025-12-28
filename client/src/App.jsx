@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useContext } from "react";
 import "react-toastify/dist/ReactToastify.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Navbar from "./components/Navbar";
 import AdminRoute from "./routes/AdminRoute";
 import ManageProduct from "./pages/ManageProduct";
@@ -12,12 +14,14 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 import { ToastContainer } from "react-toastify";
 
+
 const App = () => {
+
   return (
     <BrowserRouter>
       <Navbar />
-
       <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+
         <Routes>
           {/* Common routes */}
           <Route path="/" element={<Products />} />
@@ -44,7 +48,7 @@ const App = () => {
             }
           />
         </Routes>
-         <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer position="top-right" autoClose={3000} />
       </Suspense>
     </BrowserRouter>
   );

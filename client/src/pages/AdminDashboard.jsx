@@ -4,6 +4,8 @@ import { socket } from "../context/SocketContext";
 import { AdminContext } from "../context/AdminContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import InfoCard from "../components/InfoCard";
+import { CalendarCheck, CalendarCheck2, ClipboardClock, Package, Van } from "lucide-react";
 
 const stages = ["Placed", "Accepted", "Packed", "Out for Delivery", "Delivered"];
 
@@ -13,6 +15,23 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [viewOrder, setViewOrder] = useState(null);
+
+  const ordersStyle = {
+    backgroundColor: "orange",
+    color: "White"
+  }
+  const deliveredStyle = {
+    backgroundColor: "green",
+    color: "White"
+  }
+  const pendingStyle = {
+    backgroundColor: "red",
+    color: "White"
+  }
+  const ofdStyle = {
+    backgroundColor: "blue",
+    color: "White"
+  }
 
   useEffect(() => {
     api.get("/orders")
@@ -26,16 +45,18 @@ export default function AdminDashboard() {
     };
 
     const handleNewOrder = (order) => {
-      setOrders(prev => [...prev, order]);
-      toast.info(`New order placed: #${order.orderNumber}`);
+      setOrders(prev => {
+        const exists = prev.some(o => o._id === order._id);
+        if (exists) return prev;
+        return [...prev, order];
+      });
     };
-
     socket.on("orderStatusUpdated", handleStatusUpdate);
-    socket.on("newOrder", handleNewOrder);
+    socket.on("newOrderPlaced", handleNewOrder);
 
     return () => {
       socket.off("orderStatusUpdated", handleStatusUpdate);
-      socket.off("newOrder", handleNewOrder);
+      socket.off("newOrderPlaced", handleNewOrder);
     };
   }, []);
 
@@ -45,7 +66,7 @@ export default function AdminDashboard() {
         setOrders(prev =>
           prev.map(order => order._id === orderId ? res.data : order)
         );
-        socket.emit("orderStatusUpdated", res.data);
+        // socket.emit("orderStatusUpdated", res.data);
         toast.success(`Order #${res.data.orderNumber} status updated to ${status}`);
       })
       .catch(err => toast.error("Failed to update status"));
@@ -57,11 +78,23 @@ export default function AdminDashboard() {
     const matchesStatus = statusFilter ? order.status === statusFilter : true;
     return matchesSearch && matchesStatus;
   });
+  const sortOrder = filteredOrders.reverse();
+  const totalOrders = orders.length;
+  const delivered = orders.filter(o => o.status === "Delivered")
+  const pending = orders.filter(o => o.status !== "Delivered" && o.status !== "Out for Delivery")
+  const outforDelivery = orders.filter(o => o.status === "Out for Delivery")
 
+  console.log(delivered)
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Admin Dashboard - Orders</h2>
-
+      <h1 className="text-3xl font-bold text-orange-400 leading-10 py-3 font-serif">Welcome Admin,<p> You have to visit the orders and their statuses</p></h1>
+      {/* <h2 className="text-2xl font-bold mb-4">Admin Dashboard - Orders</h2> */}
+      <div className="flex flex-wrap gap-5 my-5">
+        <InfoCard status="Orders" count={totalOrders} icon={<Package size={54} />} styles={ordersStyle} />
+        <InfoCard status="Delivered" count={delivered.length} icon={<CalendarCheck2 size={54} />} styles={deliveredStyle} />
+        <InfoCard status="Out for Delivery" count={outforDelivery.length} icon={<Van size={54} />} styles={ofdStyle} />
+        <InfoCard status="pending" count={pending.length} icon={<ClipboardClock size={54} />} styles={pendingStyle} />
+      </div>
       {/* Search & Filter */}
       <div className="flex flex-wrap gap-4 mb-6">
         <input
@@ -100,20 +133,19 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map(order => (
+              {sortOrder.map(order => (
                 <tr key={order._id} className="border-t">
                   <td className="py-2 px-4">{order.orderNumber}</td>
                   <td className="py-2 px-4">{order.customer.name}</td>
                   <td className="py-2 px-4">₹{order.totalAmount}</td>
                   <td className="py-2 px-4">
-                    <span className={`px-2 py-1 rounded ${
-                      order.status === "Placed" ? "bg-yellow-200 text-yellow-800" :
+                    <span className={`px-2 py-1 rounded ${order.status === "Placed" ? "bg-yellow-200 text-yellow-800" :
                       order.status === "Accepted" ? "bg-blue-200 text-blue-800" :
-                      order.status === "Packed" ? "bg-purple-200 text-purple-800" :
-                      order.status === "Out for Delivery" ? "bg-orange-200 text-orange-800" :
-                      order.status === "Delivered" ? "bg-green-200 text-green-800" :
-                      "bg-gray-200 text-gray-800"
-                    }`}>
+                        order.status === "Packed" ? "bg-purple-200 text-purple-800" :
+                          order.status === "Out for Delivery" ? "bg-orange-200 text-orange-800" :
+                            order.status === "Delivered" ? "bg-green-200 text-green-800" :
+                              "bg-gray-200 text-gray-800"
+                      }`}>
                       {order.status}
                     </span>
                   </td>
